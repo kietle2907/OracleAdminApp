@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "E:\\Professional documents\\School & home sources code\\Uni\\at&bm\\PHe1\\OracleAdminApp\\OracleAdminApp\\OracleAdminApp.csproj": {}
+    "C:\\Users\\Kaito\\source\\repos\\OracleAdminApp\\OracleAdminApp\\OracleAdminApp.csproj": {}
   },
   "projects": {
-    "E:\\Professional documents\\School & home sources code\\Uni\\at&bm\\PHe1\\OracleAdminApp\\OracleAdminApp\\OracleAdminApp.csproj": {
+    "C:\\Users\\Kaito\\source\\repos\\OracleAdminApp\\OracleAdminApp\\OracleAdminApp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\Professional documents\\School & home sources code\\Uni\\at&bm\\PHe1\\OracleAdminApp\\OracleAdminApp\\OracleAdminApp.csproj",
+        "projectUniqueName": "C:\\Users\\Kaito\\source\\repos\\OracleAdminApp\\OracleAdminApp\\OracleAdminApp.csproj",
         "projectName": "OracleAdminApp",
-        "projectPath": "E:\\Professional documents\\School & home sources code\\Uni\\at&bm\\PHe1\\OracleAdminApp\\OracleAdminApp\\OracleAdminApp.csproj",
-        "packagesPath": "C:\\Users\\chint\\.nuget\\packages\\",
-        "outputPath": "E:\\Professional documents\\School & home sources code\\Uni\\at&bm\\PHe1\\OracleAdminApp\\OracleAdminApp\\obj\\",
+        "projectPath": "C:\\Users\\Kaito\\source\\repos\\OracleAdminApp\\OracleAdminApp\\OracleAdminApp.csproj",
+        "packagesPath": "C:\\Users\\Kaito\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Kaito\\source\\repos\\OracleAdminApp\\OracleAdminApp\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\chint\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Kaito\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -47,6 +47,12 @@
         "net10.0-windows": {
           "framework": "net10.0-windows7.0",
           "targetAlias": "net10.0-windows",
+          "dependencies": {
+            "Oracle.ManagedDataAccess.Core": {
+              "target": "Package",
+              "version": "[23.4.0, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
