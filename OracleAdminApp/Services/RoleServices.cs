@@ -28,6 +28,38 @@ namespace OracleAdminApp.Services
             return password?.Replace("\"", "\"\"") ?? string.Empty;
         }
 
+        public static DataTable GetAllRoles(OracleDbConnection dbConnection)
+        {
+            // Đã cập nhật thành GetConnection()
+            if (dbConnection == null || dbConnection.GetConnection() == null)
+            {
+                throw new Exception("Chưa kết nối đến cơ sở dữ liệu Oracle.");
+            }
+
+            DataTable dataTable = new DataTable();
+
+            try
+            {
+                string query = "SELECT ROLE, ROLE_ID, PASSWORD_REQUIRED, AUTHENTICATION_TYPE FROM DBA_ROLES ORDER BY ROLE ASC";
+
+                // Đã cập nhật thành GetConnection()
+                using (OracleCommand command = new OracleCommand(query, dbConnection.GetConnection()))
+                {
+                    using (OracleDataAdapter adapter = new OracleDataAdapter(command))
+                    {
+                        adapter.Fill(dataTable);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi truy vấn DBA_ROLES: " + ex.Message);
+            }
+
+            return dataTable;
+        }
+
+/*
         public static List<OracleRole> GetAllRoles()
         {
             const string sql = @"SELECT ROLE, PASSWORD_REQUIRED, AUTHENTICATION_TYPE
@@ -48,6 +80,8 @@ namespace OracleAdminApp.Services
 
             return roles;
         }
+
+*/
 
         public static OracleRole GetRoleByName(string roleName)
         {

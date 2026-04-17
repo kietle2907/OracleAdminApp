@@ -28,7 +28,40 @@ namespace OracleAdminApp.Services
             return password?.Replace("\"", "\"\"") ?? string.Empty;
         }
 
-        public static List<OracleUser> GetAllUsers()
+        public static DataTable GetAllUsers(OracleDbConnection dbConnection)
+        {
+            // Kiểm tra xem kết nối có tồn tại chưa
+            if (dbConnection == null || dbConnection.GetConnection() == null)
+            {
+                throw new Exception("Chưa kết nối đến cơ sở dữ liệu Oracle.");
+            }
+
+            DataTable dataTable = new DataTable();
+
+            try
+            {
+                // Câu lệnh SQL lấy danh sách toàn bộ User trong Oracle
+                string query = "SELECT USERNAME, USER_ID, ACCOUNT_STATUS, CREATED, PROFILE FROM DBA_USERS ORDER BY CREATED DESC";
+
+                // Tạo lệnh thực thi
+                using (OracleCommand command = new OracleCommand(query, dbConnection.GetConnection()))
+                {
+                    // Dùng DataAdapter để tự động đọc dữ liệu và đổ vào DataTable
+                    using (OracleDataAdapter adapter = new OracleDataAdapter(command))
+                    {
+                        adapter.Fill(dataTable);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi truy vấn DBA_USERS: " + ex.Message);
+            }
+
+            return dataTable;
+        }
+
+ /*       public static List<OracleUser> GetAllUsers()
         {
             const string sql = @"SELECT USERNAME, ACCOUNT_STATUS, DEFAULT_TABLESPACE, PROFILE,
                                        TO_CHAR(CREATED, 'DD-MON-YYYY HH24:MI:SS') CREATED
@@ -52,6 +85,7 @@ namespace OracleAdminApp.Services
             return users;
         }
 
+*/
         public static OracleUser GetUserByName(string username)
         {
             ValidateIdentifier(username, nameof(username));
