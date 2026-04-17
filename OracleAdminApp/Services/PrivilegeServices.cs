@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using Oracle.ManagedDataAccess.Client;
 using OracleAdminApp.Helpers;
+using System.Text.RegularExpressions;
 
 namespace OracleAdminApp.Services
 {
