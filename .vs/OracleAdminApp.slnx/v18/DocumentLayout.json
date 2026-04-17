@@ -3,6 +3,14 @@
   "WorkspaceRootPath": "C:\\Users\\Kaito\\source\\repos\\OracleAdminApp\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{C528F22C-0280-DD11-A0C8-CF31D9C7442F}|OracleAdminApp\\OracleAdminApp.csproj|c:\\users\\kaito\\source\\repos\\oracleadminapp\\oracleadminapp\\formmain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{C528F22C-0280-DD11-A0C8-CF31D9C7442F}|OracleAdminApp\\OracleAdminApp.csproj|solutionrelative:oracleadminapp\\formmain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C528F22C-0280-DD11-A0C8-CF31D9C7442F}|OracleAdminApp\\OracleAdminApp.csproj|c:\\users\\kaito\\source\\repos\\oracleadminapp\\oracleadminapp\\formmain.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C528F22C-0280-DD11-A0C8-CF31D9C7442F}|OracleAdminApp\\OracleAdminApp.csproj|solutionrelative:oracleadminapp\\formmain.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{C528F22C-0280-DD11-A0C8-CF31D9C7442F}|OracleAdminApp\\OracleAdminApp.csproj|c:\\users\\kaito\\source\\repos\\oracleadminapp\\oracleadminapp\\services\\roleservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{C528F22C-0280-DD11-A0C8-CF31D9C7442F}|OracleAdminApp\\OracleAdminApp.csproj|solutionrelative:oracleadminapp\\services\\roleservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -13,14 +21,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{C528F22C-0280-DD11-A0C8-CF31D9C7442F}|OracleAdminApp\\OracleAdminApp.csproj|c:\\users\\kaito\\source\\repos\\oracleadminapp\\oracleadminapp\\formmain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{C528F22C-0280-DD11-A0C8-CF31D9C7442F}|OracleAdminApp\\OracleAdminApp.csproj|solutionrelative:oracleadminapp\\formmain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{C528F22C-0280-DD11-A0C8-CF31D9C7442F}|OracleAdminApp\\OracleAdminApp.csproj|c:\\users\\kaito\\source\\repos\\oracleadminapp\\oracleadminapp\\formmain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
-      "RelativeMoniker": "D:0:0:{C528F22C-0280-DD11-A0C8-CF31D9C7442F}|OracleAdminApp\\OracleAdminApp.csproj|solutionrelative:oracleadminapp\\formmain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{C528F22C-0280-DD11-A0C8-CF31D9C7442F}|OracleAdminApp\\OracleAdminApp.csproj|c:\\users\\kaito\\source\\repos\\oracleadminapp\\oracleadminapp\\formmain.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C528F22C-0280-DD11-A0C8-CF31D9C7442F}|OracleAdminApp\\OracleAdminApp.csproj|solutionrelative:oracleadminapp\\formmain.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -30,7 +30,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 5,
           "Children": [
             {
               "$type": "Bookmark",
@@ -42,25 +42,25 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 2,
               "Title": "RoleServices.cs",
               "DocumentMoniker": "C:\\Users\\Kaito\\source\\repos\\OracleAdminApp\\OracleAdminApp\\Services\\RoleServices.cs",
               "RelativeDocumentMoniker": "OracleAdminApp\\Services\\RoleServices.cs",
-              "ToolTip": "C:\\Users\\Kaito\\source\\repos\\OracleAdminApp\\OracleAdminApp\\Services\\RoleServices.cs*",
-              "RelativeToolTip": "OracleAdminApp\\Services\\RoleServices.cs*",
-              "ViewState": "AgIAAC8AAAAAAAAAAAAQwFQAAAAAAAAAAAAAAA==",
+              "ToolTip": "C:\\Users\\Kaito\\source\\repos\\OracleAdminApp\\OracleAdminApp\\Services\\RoleServices.cs",
+              "RelativeToolTip": "OracleAdminApp\\Services\\RoleServices.cs",
+              "ViewState": "AgIAAA4AAAAAAAAAAAAUwFQAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-04-17T02:05:13.537Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 4,
               "Title": "FormMain.cs",
               "DocumentMoniker": "C:\\Users\\Kaito\\source\\repos\\OracleAdminApp\\OracleAdminApp\\FormMain.cs",
               "RelativeDocumentMoniker": "OracleAdminApp\\FormMain.cs",
-              "ToolTip": "C:\\Users\\Kaito\\source\\repos\\OracleAdminApp\\OracleAdminApp\\FormMain.cs",
-              "RelativeToolTip": "OracleAdminApp\\FormMain.cs",
+              "ToolTip": "C:\\Users\\Kaito\\source\\repos\\OracleAdminApp\\OracleAdminApp\\FormMain.cs*",
+              "RelativeToolTip": "OracleAdminApp\\FormMain.cs*",
               "ViewState": "AgIAAD0AAAAAAAAAAAA0wDAAAABCAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-04-17T00:24:51.505Z",
@@ -68,7 +68,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
               "Title": "UserServices.cs",
               "DocumentMoniker": "C:\\Users\\Kaito\\source\\repos\\OracleAdminApp\\OracleAdminApp\\Services\\UserServices.cs",
               "RelativeDocumentMoniker": "OracleAdminApp\\Services\\UserServices.cs",
@@ -81,25 +81,25 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 0,
               "Title": "FormMain.cs [Design]",
               "DocumentMoniker": "C:\\Users\\Kaito\\source\\repos\\OracleAdminApp\\OracleAdminApp\\FormMain.cs",
               "RelativeDocumentMoniker": "OracleAdminApp\\FormMain.cs",
-              "ToolTip": "C:\\Users\\Kaito\\source\\repos\\OracleAdminApp\\OracleAdminApp\\FormMain.cs [Design]",
-              "RelativeToolTip": "OracleAdminApp\\FormMain.cs [Design]",
+              "ToolTip": "C:\\Users\\Kaito\\source\\repos\\OracleAdminApp\\OracleAdminApp\\FormMain.cs [Design]*",
+              "RelativeToolTip": "OracleAdminApp\\FormMain.cs [Design]*",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-04-17T01:50:19.691Z",
               "EditorCaption": " [Design]"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 1,
               "Title": "FormMain.Designer.cs",
               "DocumentMoniker": "C:\\Users\\Kaito\\source\\repos\\OracleAdminApp\\OracleAdminApp\\FormMain.Designer.cs",
               "RelativeDocumentMoniker": "OracleAdminApp\\FormMain.Designer.cs",
-              "ToolTip": "C:\\Users\\Kaito\\source\\repos\\OracleAdminApp\\OracleAdminApp\\FormMain.Designer.cs",
-              "RelativeToolTip": "OracleAdminApp\\FormMain.Designer.cs",
-              "ViewState": "AgIAAHYAAAAAAAAAAAAAAIsAAAABAAAAAAAAAA==",
+              "ToolTip": "C:\\Users\\Kaito\\source\\repos\\OracleAdminApp\\OracleAdminApp\\FormMain.Designer.cs*",
+              "RelativeToolTip": "OracleAdminApp\\FormMain.Designer.cs*",
+              "ViewState": "AgIAAEgAAAAAAAAAAAAAAF8AAAA8AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-04-17T00:24:31.749Z",
               "EditorCaption": ""
