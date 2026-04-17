@@ -32,9 +32,9 @@
             usersToolStripMenuItem = new ToolStripMenuItem();
             rolesToolStripMenuItem = new ToolStripMenuItem();
             toolStripMenuItem1 = new ToolStripSeparator();
-            exitToolStripMenuItem = new ToolStripMenuItem();
             tabPrivsToolStripMenuItem = new ToolStripMenuItem();
             colPrivsToolStripMenuItem = new ToolStripMenuItem();
+            exitToolStripMenuItem = new ToolStripMenuItem();
             statusStrip1 = new StatusStrip();
             toolStripStatusLabel1 = new ToolStripStatusLabel();
             dataGridView1 = new DataGridView();
@@ -53,6 +53,7 @@
             label1 = new Label();
             textBox2 = new TextBox();
             textBox1 = new TextBox();
+            sysPrivsToolStripMenuItem = new ToolStripMenuItem();
             menuStrip1.SuspendLayout();
             statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
@@ -64,7 +65,7 @@
             // menuStrip1
             // 
             menuStrip1.ImageScalingSize = new Size(24, 24);
-            menuStrip1.Items.AddRange(new ToolStripItem[] { usersToolStripMenuItem, rolesToolStripMenuItem, toolStripMenuItem1, tabPrivsToolStripMenuItem, colPrivsToolStripMenuItem, exitToolStripMenuItem });
+            menuStrip1.Items.AddRange(new ToolStripItem[] { usersToolStripMenuItem, rolesToolStripMenuItem, toolStripMenuItem1, tabPrivsToolStripMenuItem, colPrivsToolStripMenuItem, sysPrivsToolStripMenuItem, exitToolStripMenuItem });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
             menuStrip1.Padding = new Padding(9, 3, 0, 3);
@@ -91,13 +92,6 @@
             toolStripMenuItem1.Name = "toolStripMenuItem1";
             toolStripMenuItem1.Size = new Size(6, 29);
             // 
-            // exitToolStripMenuItem
-            // 
-            exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            exitToolStripMenuItem.Size = new Size(55, 29);
-            exitToolStripMenuItem.Text = "Exit";
-            exitToolStripMenuItem.Click += exitToolStripMenuItem_Click;
-            // 
             // tabPrivsToolStripMenuItem
             // 
             tabPrivsToolStripMenuItem.Name = "tabPrivsToolStripMenuItem";
@@ -111,6 +105,13 @@
             colPrivsToolStripMenuItem.Size = new Size(110, 29);
             colPrivsToolStripMenuItem.Text = "Quyền cột";
             colPrivsToolStripMenuItem.Click += colPrivsToolStripMenuItem_Click;
+            // 
+            // exitToolStripMenuItem
+            // 
+            exitToolStripMenuItem.Name = "exitToolStripMenuItem";
+            exitToolStripMenuItem.Size = new Size(55, 29);
+            exitToolStripMenuItem.Text = "Exit";
+            exitToolStripMenuItem.Click += exitToolStripMenuItem_Click;
             // 
             // statusStrip1
             // 
@@ -306,6 +307,13 @@
             textBox1.Size = new Size(141, 31);
             textBox1.TabIndex = 0;
             // 
+            // sysPrivsToolStripMenuItem
+            // 
+            sysPrivsToolStripMenuItem.Name = "sysPrivsToolStripMenuItem";
+            sysPrivsToolStripMenuItem.Size = new Size(157, 29);
+            sysPrivsToolStripMenuItem.Text = "Quyền hệ thống";
+            sysPrivsToolStripMenuItem.Click += sysPrivsToolStripMenuItem_Click;
+            // 
             // FormMain
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
@@ -361,5 +369,6 @@
         private Button btnAddRole;
         private ToolStripMenuItem tabPrivsToolStripMenuItem;
         private ToolStripMenuItem colPrivsToolStripMenuItem;
+        private ToolStripMenuItem sysPrivsToolStripMenuItem;
     }
 }

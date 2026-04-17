@@ -203,5 +203,41 @@ namespace OracleAdminApp
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
+        private void sysPrivsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (_dbConnection == null)
+                {
+                    MessageBox.Show("Chưa kết nối database!", "Lỗi",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                string grantee = Microsoft.VisualBasic.Interaction.InputBox(
+                    "Nhập tên USER hoặc ROLE cần xem quyền hệ thống:",
+                    "Xem DBA_SYS_PRIVS",
+                    "HR");
+
+                if (string.IsNullOrWhiteSpace(grantee))
+                    return;
+
+                DataTable data = PrivilegeServices.GetSystemPrivilegesByGrantee(_dbConnection, grantee);
+
+                dataGridView1.DataSource = data;
+                dataGridView1.AutoResizeColumns();
+
+                gbUser.Visible = false;
+                gbRole.Visible = false;
+
+                toolStripStatusLabel1.Text = $"DBA_SYS_PRIVS của {grantee.ToUpper()}: {data.Rows.Count} dòng";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tải DBA_SYS_PRIVS: {ex.Message}", "Lỗi",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
     }
 }
