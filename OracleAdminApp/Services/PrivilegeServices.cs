@@ -45,8 +45,8 @@ namespace OracleAdminApp.Services
                 SELECT GRANTEE, OWNER, TABLE_NAME, GRANTOR,
                        PRIVILEGE, GRANTABLE, HIERARCHY
                 FROM   DBA_TAB_PRIVS
-                WHERE  GRANTEE = :grantee
-                ORDER  BY OWNER, TABLE_NAME";
+                WHERE  OWNER = :grantee
+                ORDER  BY GRANTEE, TABLE_NAME";
 
             var parms = new[]
             {
@@ -74,8 +74,8 @@ namespace OracleAdminApp.Services
                 SELECT GRANTEE, OWNER, TABLE_NAME, COLUMN_NAME,
                        GRANTOR, PRIVILEGE, GRANTABLE
                 FROM   DBA_COL_PRIVS
-                WHERE  GRANTEE = :grantee
-                ORDER  BY OWNER, TABLE_NAME, COLUMN_NAME";
+                WHERE  OWNER = :grantee
+                ORDER  BY GRANTEE, TABLE_NAME, COLUMN_NAME";
 
             var parms = new[]
             {
