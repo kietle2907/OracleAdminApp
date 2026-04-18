@@ -2,6 +2,8 @@
 using OracleAdminApp;
 using System.Data;
 using System.Text;
+using OracleAdminApp.Helpers;
+using System.Text.RegularExpressions;
 
 namespace OracleAdminApp.Services
 {
@@ -111,6 +113,8 @@ namespace OracleAdminApp.Services
             };
             return Run(db, sql, parms);
         }
+
+
 
         // ========== QUYỀN HỆ THỐNG ==========
 
@@ -241,6 +245,85 @@ namespace OracleAdminApp.Services
             ObjectKind.Function => new[] { "EXECUTE", "DEBUG" },
             _ => Array.Empty<string>()
         };
+
+        // ====== PHÂN QUYỀN ======
+        private static readonly Regex IdentifierValidator = new("^[A-Za-z][A-Za-z0-9_$#]*$");
+
+        private static void ValidateIdentifier(string identifier, string parameterName)
+        {
+            if (string.IsNullOrWhiteSpace(identifier))
+                throw new ArgumentException("Giá trị không được rỗng.", parameterName);
+
+            if (!IdentifierValidator.IsMatch(identifier))
+                throw new ArgumentException(
+                    "Tên phải bắt đầu bằng chữ cái và chỉ chứa chữ cái, số, _, $ hoặc #.",
+                    parameterName);
+        }
+
+        private static readonly HashSet<string> KnownPrivilegeNames = new()
+        {
+            "SELECT", "INSERT", "UPDATE", "DELETE", "ALTER", "EXECUTE",
+            "DEBUG", "UNDER", "FLASHBACK", "ON COMMIT", "REFERENCES"
+        };
+
+        private static void ValidateObjectName(string objectName)
+        {
+            if (string.IsNullOrWhiteSpace(objectName))
+                throw new ArgumentException("Tên object không được rỗng.", nameof(objectName));
+
+            var parts = objectName.Split('.');
+            if (parts.Length > 2)
+                throw new ArgumentException("Tên object không hợp lệ (tối đa SCHEMA.TABLE).", nameof(objectName));
+
+            foreach (var part in parts)
+            {
+                if (string.IsNullOrWhiteSpace(part) || !IdentifierValidator.IsMatch(part))
+                    throw new ArgumentException(
+                        "Tên object chứa ký tự không hợp lệ.", nameof(objectName));
+            }
+        }
+
+        public static void GrantPrivilege(OracleDbConnection db, string grantee, string privilege, string objectName, bool grantOption = false)
+        {
+            ValidateIdentifier(grantee, nameof(grantee));
+
+            if (string.IsNullOrWhiteSpace(privilege))
+                throw new ArgumentException("Privilege không được rỗng.", nameof(privilege));
+
+            string privUpper = privilege.ToUpperInvariant();
+
+            if (!KnownPrivilegeNames.Contains(privUpper))
+                throw new ArgumentException($"Privilege không hợp lệ: {privilege}", nameof(privilege));
+
+            ValidateObjectName(objectName);
+
+            string sql = $"GRANT {privUpper} ON {objectName.ToUpperInvariant()} TO {grantee.ToUpperInvariant()}";
+
+            if (grantOption)
+                sql += " WITH GRANT OPTION";
+
+            OracleHelper.ExecuteNonQuery(sql);
+        }
+
+
+        // ====== THU HỒI QUYỀN ======
+        public static void RevokePrivilege(OracleDbConnection db, string grantee, string privilege, string objectName)
+        {
+            ValidateIdentifier(grantee, nameof(grantee));
+
+            if (string.IsNullOrWhiteSpace(privilege))
+                throw new ArgumentException("Privilege không được rỗng.", nameof(privilege));
+
+            string privUpper = privilege.ToUpperInvariant();
+            if (!KnownPrivilegeNames.Contains(privUpper))
+                throw new ArgumentException($"Privilege không hợp lệ: {privilege}", nameof(privilege));
+
+            ValidateObjectName(objectName);
+
+            string sql = $"REVOKE {privUpper} ON {objectName.ToUpperInvariant()} FROM {grantee.ToUpperInvariant()}";
+
+            OracleHelper.ExecuteNonQuery(sql);
+        }
 
         // Đúng theo đề: chỉ SELECT và UPDATE mới được phân quyền mức cột.
         private static readonly HashSet<string> ColumnLevelAllowed =
