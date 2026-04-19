@@ -45,6 +45,12 @@ namespace OracleAdminApp
         {
             try
             {
+                if (_dbConnection == null)
+                {
+                    MessageBox.Show("Chưa kết nối database!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
                 // Load users from database
                 var users = UserServices.GetAllUsers(_dbConnection);
 
@@ -83,6 +89,12 @@ namespace OracleAdminApp
         {
             try
             {
+                if (_dbConnection == null)
+                {
+                    MessageBox.Show("Chưa kết nối database!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
                 // Load roles from database
                 var roles = RoleServices.GetAllRoles(_dbConnection);
 

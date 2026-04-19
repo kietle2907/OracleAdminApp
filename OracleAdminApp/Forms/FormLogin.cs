@@ -51,7 +51,6 @@ namespace OracleAdminApp
                 FormMain mainForm = new FormMain(_dbConnection);
                 mainForm.Show();
 
-                // Hide current form (you can also use this.Close() to close it)
                 this.Hide();
             }
             else
@@ -62,10 +61,6 @@ namespace OracleAdminApp
 
         }
 
-        private void FormLogin_Load(object sender, EventArgs e)
-        {
-
-        }
     }
 }
 

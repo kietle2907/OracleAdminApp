@@ -2,7 +2,6 @@
 using OracleAdminApp;
 using System.Data;
 using System.Text;
-using OracleAdminApp.Helpers;
 using System.Text.RegularExpressions;
 
 namespace OracleAdminApp.Services
@@ -263,7 +262,7 @@ namespace OracleAdminApp.Services
         private static readonly HashSet<string> KnownPrivilegeNames = new()
         {
             "SELECT", "INSERT", "UPDATE", "DELETE", "ALTER", "EXECUTE",
-            "DEBUG", "UNDER", "FLASHBACK", "ON COMMIT", "REFERENCES"
+            "DEBUG", "UNDER", "FLASHBACK", "REFERENCES"
         };
 
         private static void ValidateObjectName(string objectName)
@@ -302,7 +301,7 @@ namespace OracleAdminApp.Services
             if (grantOption)
                 sql += " WITH GRANT OPTION";
 
-            OracleHelper.ExecuteNonQuery(sql);
+            Exec(db, sql);
         }
 
 
@@ -322,7 +321,7 @@ namespace OracleAdminApp.Services
 
             string sql = $"REVOKE {privUpper} ON {objectName.ToUpperInvariant()} FROM {grantee.ToUpperInvariant()}";
 
-            OracleHelper.ExecuteNonQuery(sql);
+            Exec(db, sql);
         }
 
         // Đúng theo đề: chỉ SELECT và UPDATE mới được phân quyền mức cột.
@@ -391,6 +390,8 @@ namespace OracleAdminApp.Services
             string schema, string objectName, string privilege,
             List<string> newColumns, string grantee, bool withGrantOption)
         {
+            ValidateObjectName(objectName);
+            ValidateIdentifier(grantee, nameof(grantee));
             if (!ColumnLevelAllowed.Contains(privilege))
                 throw new ArgumentException(
                     $"Privilege {privilege} không hỗ trợ mức cột.");
@@ -403,6 +404,9 @@ namespace OracleAdminApp.Services
             // Bước 2: GRANT lại với danh sách cột mới (nếu còn cột nào).
             if (newColumns is { Count: > 0 })
             {
+                foreach (var col in newColumns)
+                    ValidateIdentifier(col, nameof(newColumns));
+
                 var sql = $"GRANT {privilege} ({JoinCols(newColumns)}) " +
                           $"ON {Qualify(schema, objectName)} " +
                           $"TO {QuoteIdent(grantee)}" +
@@ -452,9 +456,9 @@ namespace OracleAdminApp.Services
         private static void Validate(GrantRequest r, bool forRevoke = false)
         {
             if (r == null) throw new ArgumentNullException(nameof(r));
-            if (string.IsNullOrWhiteSpace(r.Schema)) throw new ArgumentException("Thiếu schema");
-            if (string.IsNullOrWhiteSpace(r.ObjectName)) throw new ArgumentException("Thiếu tên đối tượng");
-            if (string.IsNullOrWhiteSpace(r.Grantee)) throw new ArgumentException("Thiếu grantee");
+            ValidateIdentifier(r.Schema, nameof(r.Schema));
+            ValidateIdentifier(r.ObjectName, nameof(r.ObjectName));
+            ValidateIdentifier(r.Grantee, nameof(r.Grantee));
             if (r.Privileges == null || r.Privileges.Count == 0)
                 throw new ArgumentException("Chưa chọn privilege");
 
@@ -470,6 +474,18 @@ namespace OracleAdminApp.Services
                     throw new ArgumentException("Đã chọn cột cho SELECT nhưng chưa tick privilege SELECT");
                 if (r.UpdateColumns is { Count: > 0 } && !r.Privileges.Contains("UPDATE"))
                     throw new ArgumentException("Đã chọn cột cho UPDATE nhưng chưa tick privilege UPDATE");
+            }
+
+            if (r.SelectColumns is { Count: > 0 })
+            {
+                foreach (var col in r.SelectColumns)
+                    ValidateIdentifier(col, nameof(r.SelectColumns));
+            }
+
+            if (r.UpdateColumns is { Count: > 0 })
+            {
+                foreach (var col in r.UpdateColumns)
+                    ValidateIdentifier(col, nameof(r.UpdateColumns));
             }
         }
 

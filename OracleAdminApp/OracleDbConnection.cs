@@ -40,7 +40,7 @@ namespace OracleAdminApp
             return false;
         }
 
-        public DataTable ExecuteQuery(string query)
+        public DataTable ExecuteQuery(string query, OracleParameter[]? parameters = null)
         {
             DataTable dt = new DataTable();
             try
@@ -50,6 +50,10 @@ namespace OracleAdminApp
                     conn.Open();
                     using (OracleCommand cmd = new OracleCommand(query, conn))
                     {
+                        if (parameters != null)
+                        {
+                            cmd.Parameters.AddRange(parameters);
+                        }
                         using (OracleDataAdapter adapter = new OracleDataAdapter(cmd))
                         {
                             adapter.Fill(dt);
@@ -65,7 +69,7 @@ namespace OracleAdminApp
             return dt;
         }
 
-        public bool ExecuteCommand(string command)
+        public bool ExecuteCommand(string command, OracleParameter[]? parameters = null)
         {
             try
             {
@@ -74,6 +78,10 @@ namespace OracleAdminApp
                     conn.Open();
                     using (OracleCommand cmd = new OracleCommand(command, conn))
                     {
+                        if (parameters != null)
+                        {
+                            cmd.Parameters.AddRange(parameters);
+                        }
                         cmd.ExecuteNonQuery();
                     }
                     conn.Close();
