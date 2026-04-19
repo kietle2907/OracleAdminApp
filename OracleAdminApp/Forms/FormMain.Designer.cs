@@ -54,6 +54,7 @@
             textBox2 = new TextBox();
             textBox1 = new TextBox();
             sysPrivsToolStripMenuItem = new ToolStripMenuItem();
+            phanQuyenNangCaoToolStripMenuItem = new ToolStripMenuItem();
             menuStrip1.SuspendLayout();
             statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
@@ -65,7 +66,7 @@
             // menuStrip1
             // 
             menuStrip1.ImageScalingSize = new Size(24, 24);
-            menuStrip1.Items.AddRange(new ToolStripItem[] { usersToolStripMenuItem, rolesToolStripMenuItem, toolStripMenuItem1, tabPrivsToolStripMenuItem, colPrivsToolStripMenuItem, sysPrivsToolStripMenuItem, exitToolStripMenuItem });
+            menuStrip1.Items.AddRange(new ToolStripItem[] { usersToolStripMenuItem, rolesToolStripMenuItem, toolStripMenuItem1, tabPrivsToolStripMenuItem, colPrivsToolStripMenuItem, sysPrivsToolStripMenuItem, phanQuyenNangCaoToolStripMenuItem, exitToolStripMenuItem });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
             menuStrip1.Padding = new Padding(9, 3, 0, 3);
@@ -314,6 +315,12 @@
             sysPrivsToolStripMenuItem.Text = "Quyền hệ thống";
             sysPrivsToolStripMenuItem.Click += sysPrivsToolStripMenuItem_Click;
             // 
+            // phanQuyenNangCaoToolStripMenuItem
+            //
+            this.phanQuyenNangCaoToolStripMenuItem.Name = "phanQuyenNangCaoToolStripMenuItem";
+            this.phanQuyenNangCaoToolStripMenuItem.Size = new Size(180, 29);
+            this.phanQuyenNangCaoToolStripMenuItem.Text = "Phân quyền nâng cao";
+            this.phanQuyenNangCaoToolStripMenuItem.Click += new EventHandler(this.phanQuyenNangCaoToolStripMenuItem_Click);
             // FormMain
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
@@ -370,5 +377,6 @@
         private ToolStripMenuItem tabPrivsToolStripMenuItem;
         private ToolStripMenuItem colPrivsToolStripMenuItem;
         private ToolStripMenuItem sysPrivsToolStripMenuItem;
+        private ToolStripMenuItem phanQuyenNangCaoToolStripMenuItem;
     }
 }

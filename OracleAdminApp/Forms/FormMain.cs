@@ -7,6 +7,7 @@ using System.Text;
 using System.Windows.Forms;
 using OracleAdminApp.Services;
 using Microsoft.VisualBasic;
+using OracleAdminApp.Forms;
 
 namespace OracleAdminApp
 {
@@ -20,6 +21,19 @@ namespace OracleAdminApp
 
             gbUser.Visible = false;
             gbRole.Visible = false;
+
+            // Đăng ký sự kiện Click cho User
+            btnAddUser.Click += btnAddUser_Click;
+            btnEditUser.Click += btnEditUser_Click;
+            btnDeleteUser.Click += btnDeleteUser_Click;
+
+            // Đăng ký sự kiện Click cho Role
+            btnAddRole.Click += btnAddRole_Click;
+            btnEditRole.Click += btnEditRole_Click;
+            btnDeleteRole.Click += btnDeleteRole_Click;
+
+            // Đăng ký sự kiện click cho DataGridView
+            dataGridView1.CellClick += dataGridView1_CellClick;
         }
 
         public FormMain(OracleDbConnection dbConnection) : this()
@@ -46,6 +60,23 @@ namespace OracleAdminApp
                 MessageBox.Show($"Lỗi khi tải danh sách người dùng: {ex.Message}", "Lỗi",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+
+            // Ẩn UC nâng cao nếu đang hiển thị
+            if (_ucAdvancedPrivs != null) _ucAdvancedPrivs.Visible = false;
+
+            // Hiện lại giao diện cũ
+            dataGridView1.Visible = true;
+            panel1.Visible = true;
+
+            try
+            {
+                var users = UserServices.GetAllUsers(_dbConnection);
+                dataGridView1.DataSource = users;
+                dataGridView1.AutoResizeColumns();
+                gbUser.Visible = true;
+                gbRole.Visible = false;
+            }
+            catch (Exception ex) {  }
         }
 
         private void rolesToolStripMenuItem_Click(object sender, EventArgs e)
@@ -238,6 +269,170 @@ namespace OracleAdminApp
                 MessageBox.Show($"Lỗi khi tải DBA_SYS_PRIVS: {ex.Message}", "Lỗi",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0)
+            {
+                DataGridViewRow row = dataGridView1.Rows[e.RowIndex];
+
+                // Nếu đang mở tab User
+                if (gbUser.Visible)
+                {
+                    textBox1.Text = row.Cells["USERNAME"].Value?.ToString();
+                    textBox2.Text = ""; // Xóa rỗng mật khẩu để đảm bảo an toàn
+                }
+                // Nếu đang mở tab Role
+                else if (gbRole.Visible)
+                {
+                    textBox3.Text = row.Cells["ROLE"].Value?.ToString();
+                }
+            }
+        }
+
+        private void btnAddUser_Click(object sender, EventArgs e)
+        {
+            string username = textBox1.Text.Trim();
+            string password = textBox2.Text;
+
+            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+            {
+                MessageBox.Show("Vui lòng nhập đủ Tên đăng nhập và Mật khẩu!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            string sql = $"CREATE USER {username} IDENTIFIED BY \"{password}\"";
+            if (_dbConnection != null && _dbConnection.ExecuteCommand(sql))
+            {
+                MessageBox.Show("Thêm User thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                usersToolStripMenuItem_Click(null, null); // Load lại bảng User
+            }
+        }
+
+        private void btnEditUser_Click(object sender, EventArgs e)
+        {
+            string username = textBox1.Text.Trim();
+            string password = textBox2.Text;
+
+            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+            {
+                MessageBox.Show("Vui lòng chọn User và nhập Mật khẩu mới để thay đổi!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // Chức năng Sửa User chủ yếu là thay đổi mật khẩu
+            string sql = $"ALTER USER {username} IDENTIFIED BY \"{password}\"";
+            if (_dbConnection != null && _dbConnection.ExecuteCommand(sql))
+            {
+                MessageBox.Show("Đổi mật khẩu User thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                usersToolStripMenuItem_Click(null, null); // Load lại bảng User
+            }
+        }
+
+        private void btnDeleteUser_Click(object sender, EventArgs e)
+        {
+            string username = textBox1.Text.Trim();
+            if (string.IsNullOrEmpty(username))
+            {
+                MessageBox.Show("Vui lòng chọn User cần xóa!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (MessageBox.Show($"Bạn có chắc chắn muốn xóa user '{username}' và toàn bộ schema của user này (CASCADE)?", "Xác nhận xóa", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            {
+                string sql = $"DROP USER {username} CASCADE";
+                if (_dbConnection != null && _dbConnection.ExecuteCommand(sql))
+                {
+                    MessageBox.Show("Xóa User thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    textBox1.Clear();
+                    textBox2.Clear();
+                    usersToolStripMenuItem_Click(null, null); // Load lại bảng User
+                }
+            }
+        }
+
+        private void btnAddRole_Click(object sender, EventArgs e)
+        {
+            string roleName = textBox3.Text.Trim();
+            if (string.IsNullOrEmpty(roleName))
+            {
+                MessageBox.Show("Vui lòng nhập tên Role!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            string sql = $"CREATE ROLE {roleName}";
+            if (_dbConnection != null && _dbConnection.ExecuteCommand(sql))
+            {
+                MessageBox.Show("Thêm Role thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                rolesToolStripMenuItem_Click(null, null); // Load lại bảng Role
+            }
+        }
+
+        private void btnEditRole_Click(object sender, EventArgs e)
+        {
+            // Trong Oracle, Role không có nhiều thuộc tính để "Sửa" như Tên. 
+            // Thông thường nếu sai tên, người quản trị sẽ Xóa đi và Tạo lại.
+            MessageBox.Show("Trong Oracle, Role thường chỉ được cấp/thu hồi quyền chứ không thể dễ dàng đổi tên (RENAME).\n\nNếu bạn muốn đổi tên Role, vui lòng Xóa Role hiện tại và Thêm Role mới.", "Thông tin", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void btnDeleteRole_Click(object sender, EventArgs e)
+        {
+            string roleName = textBox3.Text.Trim();
+            if (string.IsNullOrEmpty(roleName))
+            {
+                MessageBox.Show("Vui lòng chọn Role cần xóa!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (MessageBox.Show($"Bạn có chắc chắn muốn xóa role '{roleName}'?", "Xác nhận xóa", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            {
+                string sql = $"DROP ROLE {roleName}";
+                if (_dbConnection != null && _dbConnection.ExecuteCommand(sql))
+                {
+                    MessageBox.Show("Xóa Role thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    textBox3.Clear();
+                    rolesToolStripMenuItem_Click(null, null); // Load lại bảng Role
+                }
+            }
+        }
+
+        private UcPhanQuyenNangCao? _ucAdvancedPrivs;
+
+        private void phanQuyenNangCaoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (_dbConnection == null)
+            {
+                MessageBox.Show("Chưa kết nối database!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // 1. Ẩn các giao diện cũ để lấy không gian hiển thị
+            dataGridView1.Visible = false;
+            panel1.Visible = false;
+
+            // 2. Khởi tạo UserControl nếu chưa có
+            if (_ucAdvancedPrivs == null)
+            {
+                _ucAdvancedPrivs = new UcPhanQuyenNangCao();
+                _ucAdvancedPrivs.Dock = DockStyle.Fill;
+
+                // Thêm vào danh sách control của Form
+                this.Controls.Add(_ucAdvancedPrivs);
+
+                // Đưa lên lớp trên cùng để không bị che khuất
+                _ucAdvancedPrivs.BringToFront();
+
+                // Quan trọng: Gọi hàm Initialize để nạp dữ liệu từ DB vào các Combobox
+                _ucAdvancedPrivs.Initialize(_dbConnection);
+            }
+            else
+            {
+                _ucAdvancedPrivs.Visible = true;
+                _ucAdvancedPrivs.BringToFront();
+            }
+
+            toolStripStatusLabel1.Text = "Đang ở chế độ Phân quyền nâng cao";
         }
     }
 }
