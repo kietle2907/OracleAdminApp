@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Text.RegularExpressions;
 using Oracle.ManagedDataAccess.Client;
-using OracleAdminApp.Helpers;
 using OracleAdminApp.Models;
 
 namespace OracleAdminApp.Services
@@ -63,9 +62,8 @@ namespace OracleAdminApp.Services
 
         /// <summary>
         /// Lấy danh sách tất cả user từ DBA_USERS.
-        /// Dùng OracleHelper cho đồng bộ với các service khác.
         /// </summary>
-        public static DataTable GetAllUsersTable()
+        public static DataTable GetAllUsersTable(OracleDbConnection dbConnection)
         {
             const string sql = @"
         SELECT USERNAME, USER_ID, ACCOUNT_STATUS, 
@@ -73,35 +71,9 @@ namespace OracleAdminApp.Services
                TO_CHAR(CREATED,'DD-MM-YYYY HH24:MI:SS') AS CREATED
         FROM   DBA_USERS
         ORDER  BY USERNAME";
-            return OracleHelper.ExecuteQuery(sql);
+            return dbConnection.ExecuteQuery(sql);
         }
-
-        /*       public static List<OracleUser> GetAllUsers()
-               {
-                   const string sql = @"SELECT USERNAME, ACCOUNT_STATUS, DEFAULT_TABLESPACE, PROFILE,
-                                              TO_CHAR(CREATED, 'DD-MON-YYYY HH24:MI:SS') CREATED
-                                       FROM DBA_USERS
-                                       ORDER BY USERNAME";
-                   var dt = OracleHelper.ExecuteQuery(sql);
-
-                   var users = new List<OracleUser>();
-                   foreach (DataRow row in dt.Rows)
-                   {
-                       users.Add(new OracleUser
-                       {
-                           Username = row["USERNAME"]?.ToString(),
-                           AccountStatus = row["ACCOUNT_STATUS"]?.ToString(),
-                           DefaultTablespace = row["DEFAULT_TABLESPACE"]?.ToString(),
-                           Profile = row["PROFILE"]?.ToString(),
-                           Created = row["CREATED"]?.ToString()
-                       });
-                   }
-
-                   return users;
-               }
-
-       */
-        public static OracleUser GetUserByName(string username)
+        public static OracleUser? GetUserByName(OracleDbConnection dbConnection, string username)
         {
             ValidateIdentifier(username, nameof(username));
             const string sql = @"SELECT USERNAME, ACCOUNT_STATUS, DEFAULT_TABLESPACE, PROFILE,
@@ -113,7 +85,7 @@ namespace OracleAdminApp.Services
             {
                 new OracleParameter(":username", OracleDbType.Varchar2) { Value = username.ToUpperInvariant() }
             };
-            var dt = OracleHelper.ExecuteQuery(sql, parms);
+            var dt = dbConnection.ExecuteQuery(sql, parms);
             if (dt.Rows.Count == 0)
                 return null;
 
@@ -128,7 +100,7 @@ namespace OracleAdminApp.Services
             };
         }
 
-        public static void CreateUser(string username,
+        public static void CreateUser(OracleDbConnection dbConnection, string username,
                                       string password,
                                       string defaultTablespace = "USERS",
                                       string profile = "DEFAULT")
@@ -146,43 +118,43 @@ namespace OracleAdminApp.Services
                             TEMPORARY TABLESPACE TEMP
                             PROFILE {profile.ToUpperInvariant()}";
 
-            OracleHelper.ExecuteNonQuery(sql);
+            dbConnection.ExecuteCommand(sql);
         }
 
-        public static void DropUser(string username, bool cascade = true)
+        public static void DropUser(OracleDbConnection dbConnection, string username, bool cascade = true)
         {
             ValidateIdentifier(username, nameof(username));
             string sql = cascade
                 ? $"DROP USER {username.ToUpperInvariant()} CASCADE"
                 : $"DROP USER {username.ToUpperInvariant()}";
-            OracleHelper.ExecuteNonQuery(sql);
+            dbConnection.ExecuteCommand(sql);
         }
 
-        public static void LockUser(string username)
+        public static void LockUser(OracleDbConnection dbConnection, string username)
         {
             ValidateIdentifier(username, nameof(username));
             string sql = $"ALTER USER {username.ToUpperInvariant()} ACCOUNT LOCK";
-            OracleHelper.ExecuteNonQuery(sql);
+            dbConnection.ExecuteCommand(sql);
         }
 
-        public static void UnlockUser(string username)
+        public static void UnlockUser(OracleDbConnection dbConnection, string username)
         {
             ValidateIdentifier(username, nameof(username));
             string sql = $"ALTER USER {username.ToUpperInvariant()} ACCOUNT UNLOCK";
-            OracleHelper.ExecuteNonQuery(sql);
+            dbConnection.ExecuteCommand(sql);
         }
 
-        public static void ChangePassword(string username, string newPassword)
+        public static void ChangePassword(OracleDbConnection dbConnection, string username, string newPassword)
         {
             ValidateIdentifier(username, nameof(username));
             if (string.IsNullOrWhiteSpace(newPassword))
                 throw new ArgumentException("Mật khẩu mới không được rỗng.", nameof(newPassword));
 
             string sql = $"ALTER USER {username.ToUpperInvariant()} IDENTIFIED BY \"{EscapePassword(newPassword)}\"";
-            OracleHelper.ExecuteNonQuery(sql);
+            dbConnection.ExecuteCommand(sql);
         }
 
-        public static List<string> GetUserRoles(string username)
+        public static List<string> GetUserRoles(OracleDbConnection dbConnection, string username)
         {
             ValidateIdentifier(username, nameof(username));
             const string sql = @"SELECT GRANTED_ROLE
@@ -194,15 +166,19 @@ namespace OracleAdminApp.Services
                 new OracleParameter(":username", OracleDbType.Varchar2) { Value = username.ToUpperInvariant() }
             };
 
-            var dt = OracleHelper.ExecuteQuery(sql, parms);
+            var dt = dbConnection.ExecuteQuery(sql, parms);
             var roles = new List<string>();
             foreach (DataRow row in dt.Rows)
-                roles.Add(row["GRANTED_ROLE"]?.ToString());
+            {
+                var role = row["GRANTED_ROLE"]?.ToString();
+                if (!string.IsNullOrEmpty(role))
+                    roles.Add(role);
+            }
 
             return roles;
         }
 
-        public static void GrantRoleToUser(string username, string roleName, bool adminOption = false)
+        public static void GrantRoleToUser(OracleDbConnection dbConnection, string username, string roleName, bool adminOption = false)
         {
             ValidateIdentifier(username, nameof(username));
             ValidateIdentifier(roleName, nameof(roleName));
@@ -210,15 +186,15 @@ namespace OracleAdminApp.Services
             if (adminOption)
                 sql += " WITH ADMIN OPTION";
 
-            OracleHelper.ExecuteNonQuery(sql);
+            dbConnection.ExecuteCommand(sql);
         }
 
-        public static void RevokeRoleFromUser(string username, string roleName)
+        public static void RevokeRoleFromUser(OracleDbConnection dbConnection, string username, string roleName)
         {
             ValidateIdentifier(username, nameof(username));
             ValidateIdentifier(roleName, nameof(roleName));
             string sql = $"REVOKE {roleName.ToUpperInvariant()} FROM {username.ToUpperInvariant()}";
-            OracleHelper.ExecuteNonQuery(sql);
+            dbConnection.ExecuteCommand(sql);
         }
     }
 }

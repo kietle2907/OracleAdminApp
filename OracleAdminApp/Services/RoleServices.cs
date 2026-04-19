@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Text.RegularExpressions;
 using Oracle.ManagedDataAccess.Client;
-using OracleAdminApp.Helpers;
 using OracleAdminApp.Models;
 
 namespace OracleAdminApp.Services
@@ -61,42 +60,17 @@ namespace OracleAdminApp.Services
 
         /// <summary>
         /// Lấy danh sách tất cả role từ DBA_ROLES.
-        /// Dùng OracleHelper cho đồng bộ với các service khác.
         /// </summary>
-        public static DataTable GetAllRolesTable()
+        public static DataTable GetAllRolesTable(OracleDbConnection dbConnection)
         {
             const string sql = @"
         SELECT ROLE, ROLE_ID, PASSWORD_REQUIRED, AUTHENTICATION_TYPE
         FROM   DBA_ROLES
         ORDER  BY ROLE";
-            return OracleHelper.ExecuteQuery(sql);
+            return dbConnection.ExecuteQuery(sql);
         }
 
-        /*
-                public static List<OracleRole> GetAllRoles()
-                {
-                    const string sql = @"SELECT ROLE, PASSWORD_REQUIRED, AUTHENTICATION_TYPE
-                                         FROM DBA_ROLES
-                                         ORDER BY ROLE";
-                    var dt = OracleHelper.ExecuteQuery(sql);
-
-                    var roles = new List<OracleRole>();
-                    foreach (DataRow row in dt.Rows)
-                    {
-                        roles.Add(new OracleRole
-                        {
-                            RoleName = row["ROLE"]?.ToString(),
-                            PasswordRequired = row["PASSWORD_REQUIRED"]?.ToString(),
-                            Authentication = row["AUTHENTICATION_TYPE"]?.ToString()
-                        });
-                    }
-
-                    return roles;
-                }
-
-        */
-
-        public static OracleRole GetRoleByName(string roleName)
+        public static OracleRole? GetRoleByName(OracleDbConnection dbConnection, string roleName)
         {
             ValidateIdentifier(roleName, nameof(roleName));
             const string sql = @"SELECT ROLE, PASSWORD_REQUIRED, AUTHENTICATION_TYPE
@@ -107,21 +81,21 @@ namespace OracleAdminApp.Services
             {
                 new OracleParameter(":roleName", OracleDbType.Varchar2) { Value = roleName.ToUpperInvariant() }
             };
-            var dt = OracleHelper.ExecuteQuery(sql, parms);
+            var dt = dbConnection.ExecuteQuery(sql, parms);
             if (dt.Rows.Count == 0)
                 return null;
 
             var row = dt.Rows[0];
             return new OracleRole
             {
-                RoleName = row["ROLE"]?.ToString(),
-                PasswordRequired = row["PASSWORD_REQUIRED"]?.ToString(),
-                Authentication = row["AUTHENTICATION_TYPE"]?.ToString()
+                RoleName = row["ROLE"]?.ToString() ?? string.Empty,
+                PasswordRequired = row["PASSWORD_REQUIRED"]?.ToString() ?? string.Empty,
+                Authentication = row["AUTHENTICATION_TYPE"]?.ToString() ?? string.Empty
             };
         }
 
-        public static void CreateRole(string roleName,
-                                      string password = null,
+        public static void CreateRole(OracleDbConnection dbConnection, string roleName,
+                                      string? password = null,
                                       bool identifiedExternally = false,
                                       bool identifiedGlobally = false)
         {
@@ -151,17 +125,17 @@ namespace OracleAdminApp.Services
                 ? $"CREATE ROLE {roleName.ToUpperInvariant()}"
                 : $"CREATE ROLE {roleName.ToUpperInvariant()} {authClause}";
 
-            OracleHelper.ExecuteNonQuery(sql);
+            dbConnection.ExecuteCommand(sql);
         }
 
-        public static void DropRole(string roleName)
+        public static void DropRole(OracleDbConnection dbConnection, string roleName)
         {
             ValidateIdentifier(roleName, nameof(roleName));
             string sql = $"DROP ROLE {roleName.ToUpperInvariant()}";
-            OracleHelper.ExecuteNonQuery(sql);
+            dbConnection.ExecuteCommand(sql);
         }
 
-        public static List<string> GetRoleGrants(string roleName)
+        public static List<string> GetRoleGrants(OracleDbConnection dbConnection, string roleName)
         {
             ValidateIdentifier(roleName, nameof(roleName));
             const string sql = @"SELECT GRANTEE, ADMIN_OPTION, DEFAULT_ROLE
@@ -172,17 +146,20 @@ namespace OracleAdminApp.Services
             {
                 new OracleParameter(":roleName", OracleDbType.Varchar2) { Value = roleName.ToUpperInvariant() }
             };
-            var dt = OracleHelper.ExecuteQuery(sql, parms);
+            var dt = dbConnection.ExecuteQuery(sql, parms);
             var grants = new List<string>();
             foreach (DataRow row in dt.Rows)
             {
-                grants.Add($"{row["GRANTEE"]} | ADMIN_OPTION={row["ADMIN_OPTION"]} | DEFAULT_ROLE={row["DEFAULT_ROLE"]}");
+                string grantee = row["GRANTEE"]?.ToString() ?? string.Empty;
+                string adminOption = row["ADMIN_OPTION"]?.ToString() ?? string.Empty;
+                string defaultRole = row["DEFAULT_ROLE"]?.ToString() ?? string.Empty;
+                grants.Add($"{grantee} | ADMIN_OPTION={adminOption} | DEFAULT_ROLE={defaultRole}");
             }
 
             return grants;
         }
 
-        public static List<string> GetRolesForGrantee(string grantee)
+        public static List<string> GetRolesForGrantee(OracleDbConnection dbConnection, string grantee)
         {
             ValidateIdentifier(grantee, nameof(grantee));
             const string sql = @"SELECT GRANTED_ROLE
@@ -193,30 +170,34 @@ namespace OracleAdminApp.Services
             {
                 new OracleParameter(":grantee", OracleDbType.Varchar2) { Value = grantee.ToUpperInvariant() }
             };
-            var dt = OracleHelper.ExecuteQuery(sql, parms);
+            var dt = dbConnection.ExecuteQuery(sql, parms);
             var roles = new List<string>();
             foreach (DataRow row in dt.Rows)
-                roles.Add(row["GRANTED_ROLE"]?.ToString());
+            {
+                var role = row["GRANTED_ROLE"]?.ToString();
+                if (!string.IsNullOrEmpty(role))
+                    roles.Add(role);
+            }
 
             return roles;
         }
 
-        public static void GrantRole(string roleName, string grantee, bool adminOption = false)
+        public static void GrantRole(OracleDbConnection dbConnection, string roleName, string grantee, bool adminOption = false)
         {
             ValidateIdentifier(roleName, nameof(roleName));
             ValidateIdentifier(grantee, nameof(grantee));
             string sql = $"GRANT {roleName.ToUpperInvariant()} TO {grantee.ToUpperInvariant()}";
             if (adminOption)
                 sql += " WITH ADMIN OPTION";
-            OracleHelper.ExecuteNonQuery(sql);
+            dbConnection.ExecuteCommand(sql);
         }
 
-        public static void RevokeRole(string roleName, string grantee)
+        public static void RevokeRole(OracleDbConnection dbConnection, string roleName, string grantee)
         {
             ValidateIdentifier(roleName, nameof(roleName));
             ValidateIdentifier(grantee, nameof(grantee));
             string sql = $"REVOKE {roleName.ToUpperInvariant()} FROM {grantee.ToUpperInvariant()}";
-            OracleHelper.ExecuteNonQuery(sql);
+            dbConnection.ExecuteCommand(sql);
         }
     }
 }
